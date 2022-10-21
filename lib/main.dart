@@ -1,4 +1,6 @@
+import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:simple_mailer_app/theme/theme.dart';
 import 'package:simple_mailer_app/views/pages.dart';
 
 void main() {
@@ -11,13 +13,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+    return DynamicColorBuilder(builder: (lightColorScheme, darkColorScheme) {
+      return MaterialApp(
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: MyTheme.lightTheme(lightColorScheme),
+        darkTheme: MyTheme.darkTheme(darkColorScheme),
+        initialRoute: "/",
+        routes: {
+          MailerPage.routeName: (context) => MailerPage(),
+        },
+      );
+    });
   }
 }
