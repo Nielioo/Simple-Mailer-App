@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
         initialRoute: "/",
         routes: {
           MailerPage.routeName: (context) => MailerPage(),
+          AlreadyVerifiedPage.routeName: (context) => AlreadyVerifiedPage(),
         },
       );
     });
