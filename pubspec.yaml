@@ -41,6 +41,7 @@ dependencies:
   email_validator: ^2.1.17
   fluttertoast: ^8.1.1
   uni_links: ^0.5.1
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:

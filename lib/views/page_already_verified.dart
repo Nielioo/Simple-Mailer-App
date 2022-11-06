@@ -9,83 +9,19 @@ class AlreadyVerifiedPage extends StatefulWidget {
 }
 
 class _AlreadyVerifiedPageState extends State<AlreadyVerifiedPage> {
-  Uri? _initialUri;
-  Uri? _latestUri;
-  Object? _err;
-  StreamSubscription? _sub;
-  final _scaffoldKey = GlobalKey();
-  bool _initialUriIsHandled = false;
+  bool isPlaying = false;
+  final confettiController = ConfettiController();
 
   @override
   void initState() {
     super.initState();
-    _handleIncomingLinks();
-    _handleInitialUri();
+    confettiController.play();
   }
 
   @override
   void dispose() {
-    _sub?.cancel();
+    confettiController.dispose();
     super.dispose();
-  }
-
-  void _handleIncomingLinks() {
-    // It will handle app links while the app is already started - be it in
-    // the foreground or in the background.
-    _sub = uriLinkStream.listen((Uri? uri) {
-      if (!mounted) return;
-      print('got uri: $uri');
-      setState(() {
-        _latestUri = uri;
-        _err = null;
-      });
-    }, onError: (Object err) {
-      if (!mounted) return;
-      print('got err: $err');
-      setState(() {
-        _latestUri = null;
-        if (err is FormatException) {
-          _err = err;
-        } else {
-          _err = null;
-        }
-      });
-    });
-  }
-
-  Future<void> _handleInitialUri() async {
-    if (!_initialUriIsHandled) {
-      _initialUriIsHandled = true;
-      _showSnackBar('_handleInitialUri called');
-      try {
-        final uri = await getInitialUri();
-        if (uri == null) {
-          print('no initial uri');
-        } else {
-          print('got initial uri: $uri');
-        }
-        if (!mounted) return;
-        setState(() => _initialUri = uri);
-      } on PlatformException {
-        // Platform messages may fail but we ignore the exception
-        print('falied to get initial uri');
-      } on FormatException catch (err) {
-        if (!mounted) return;
-        print('malformed initial uri');
-        setState(() => _err = err);
-      }
-    }
-  }
-
-  void _showSnackBar(String msg) {
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
-      final context = _scaffoldKey.currentContext;
-      if (context != null) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(msg),
-        ));
-      }
-    });
   }
 
   @override
@@ -98,11 +34,51 @@ class _AlreadyVerifiedPageState extends State<AlreadyVerifiedPage> {
         width: double.infinity,
         height: double.infinity,
         padding: EdgeInsets.all(24),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [Text("Your email already verified!"),],
-          ),
+        child: Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.network('https://media.giphy.com/media/KeBfPKVHJ3guo1PZOw/giphy.gif', width: 150,),
+                  Text("Your email already verified! 🎉", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),),
+                  // ElevatedButton(
+                  //     onPressed: () {
+                  //       isPlaying
+                  //           ? confettiController.stop()
+                  //           : confettiController.play();
+                  //     },
+                  //     child: Text(isPlaying ? 'Stop 🥳' : 'Celebrate 🥳')),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              alignment: Alignment.center,
+              child: ConfettiWidget(
+                confettiController: confettiController,
+                shouldLoop: true,
+
+                // Set confetti direction
+                // blastDirection: pi/2, // down
+                blastDirectionality: BlastDirectionality.explosive, //all
+
+                // Set emission count
+                emissionFrequency: 0.00,
+                numberOfParticles: 75,
+
+                // Set intensity
+                minBlastForce: 10,
+                maxBlastForce: 100,
+
+                // Set speed
+                gravity: 0.4,
+              ),
+            ),
+          ],
         ),
       ),
     );
