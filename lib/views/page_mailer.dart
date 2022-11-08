@@ -116,7 +116,7 @@ class _MailerPageState extends State<MailerPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-
+              Lottie.asset("assets/lottie/mail.json", width: 300),
               Form(
                   key: _formKey,
                   child: Column(
